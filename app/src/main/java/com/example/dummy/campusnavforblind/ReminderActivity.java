@@ -1,6 +1,6 @@
 package com.example.dummy.campusnavforblind;
 
-import android.app.ProgressDialog;
+
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -11,101 +11,79 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
+
 
 import com.example.dummy.campusnavforblind.ReminderDatabasePackage.ReminderDbConfig;
-import com.example.dummy.campusnavforblind.ReminderDatabasePackage.ReminderDbHelper;
+
 
 
 public class ReminderActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private FloatingActionButton mAddReminderButton;
-    private Toolbar mToolbar;
-    AlarmAdapter mCursorAdapter;
-    ReminderDbHelper alarmReminderDbHelper = new ReminderDbHelper(this);
-    ListView reminderListView;
-    ProgressDialog prgDialog;
-    TextView reminderText;
+    private FloatingActionButton addButton; // floating button object
+    AlarmAdapter alarmAdapter;  // object of alarm adapter
+    ListView reminderListView;  // listview for reminder list
 
-    private String alarmTitle = "";
-
-    private static final int VEHICLE_LOADER = 0;
+    private static final int REMINDER_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reminder);
-
-      /*  mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mToolbar.setTitle(R.string.app_name); */
+        setContentView(R.layout.activity_reminder); // set layout file
 
 
-        reminderListView = (ListView) findViewById(R.id.list);
-        // View emptyView = findViewById(R.id.empty_view);
-        // reminderListView.setEmptyView(emptyView);
+        //object for list view and add reminder button
+        reminderListView = (ListView) findViewById(R.id.listView);
+        addButton = (FloatingActionButton) findViewById(R.id.addButton);
 
+        //starting reminder data adapter
+        alarmAdapter = new AlarmAdapter(ReminderActivity.this, null);
+        reminderListView.setAdapter(alarmAdapter); // adding adapter to listview
 
-        // reminderText = (TextView) findViewById(R.id.reminderText);
-
-
-
-
-        mCursorAdapter = new AlarmAdapter(this, null);
-        reminderListView.setAdapter(mCursorAdapter);
-
-        reminderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
-
-
-                Intent intent = new Intent(ReminderActivity.this, AddReminderActivity.class);
-
-                Uri currentVehicleUri = ContentUris.withAppendedId(ReminderDbConfig.ReminderEntry.CONTENT_URI,id);
-
-                // Set the URI on the data field of the intent
-                intent.setData(currentVehicleUri);
-
-                startActivity(intent);
-
-            }
-        });
-
-
-        mAddReminderButton = (FloatingActionButton) findViewById(R.id.fab);
-
-        mAddReminderButton.setOnClickListener(new View.OnClickListener() {
+        // on clicking add reminder button, go to add reminder page.
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), AddReminderActivity.class);
                 startActivity(intent);
-                // addReminderTitle();
             }
         });
 
-        getSupportLoaderManager().initLoader(VEHICLE_LOADER, null, this);
+        //onclicking listview, pass id and uri to add reminder page for fetching purpose
+        reminderListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+
+                Intent intent = new Intent(ReminderActivity.this, AddReminderActivity.class);
+
+                Uri currentUri = ContentUris.withAppendedId(ReminderDbConfig.ReminderEntry.CONTENT_URI,id);
+                intent.setData(currentUri);
+
+                startActivity(intent);
+
+            }
+        });
+
+        // call this method to fetch data of reminder from db
+        getSupportLoaderManager().initLoader(REMINDER_ID, null, this);
 
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        //definign variables
         String[] projection = {
                 ReminderDbConfig.ReminderEntry._ID,
                 ReminderDbConfig.ReminderEntry.KEY_TITLE,
                 ReminderDbConfig.ReminderEntry.KEY_DATE,
                 ReminderDbConfig.ReminderEntry.KEY_TIME
-                /*  AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT,
-                  AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_NO,
-                  AlarmReminderContract.AlarmReminderEntry.KEY_REPEAT_TYPE,
-                  AlarmReminderContract.AlarmReminderEntry.KEY_ACTIVE */
 
         };
 
+        // return cursor data
         return new CursorLoader(this,   // Parent activity context
                 ReminderDbConfig.ReminderEntry.CONTENT_URI,   // Provider content URI to query
                 projection,             // Columns to include in the resulting Cursor
@@ -117,22 +95,12 @@ public class ReminderActivity extends AppCompatActivity implements LoaderManager
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        mCursorAdapter.swapCursor(cursor);
-      /*  if (cursor.getCount() > 0){
-            reminderText.setVisibility(View.VISIBLE);
-        }else{
-            reminderText.setVisibility(View.INVISIBLE);
-        } */
-
-    }
+        alarmAdapter.swapCursor(cursor);
+        }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mCursorAdapter.swapCursor(null);
-
-    }
-
-    public void restartLoader(){
-        getSupportLoaderManager().restartLoader(VEHICLE_LOADER, null, this);
-    }
+        // on resetting data, update list
+        alarmAdapter.swapCursor(null);
+        }
 }

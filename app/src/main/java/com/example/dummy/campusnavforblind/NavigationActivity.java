@@ -44,13 +44,14 @@ import kotlin.jvm.functions.Function1;
 public class NavigationActivity extends AppCompatActivity{
 
     int flag =1;
-    ImageView imageView;
+    ImageView imageView; // imageview that holds campus map
+    // objects to draw on imageview
     Bitmap bitmap;
     Canvas canvas;
     Paint paint,cpaint,rpaint;
     Path path;
 
-    //varun
+    //cordinates of the rooms and places
     float woodworkingEnterance[] = {716,1950};
     float studentloungeStart[]={716,1710};
     float stdentloungeEnd[] = {716,1020};
@@ -84,13 +85,13 @@ public class NavigationActivity extends AppCompatActivity{
 
 
 
-    ProximityObserver.Handler proximityHandlerw12;
+    ProximityObserver.Handler proximityHandlerw12; // proximity handler class
 
 
 
-    EditText startPoint;
-    EditText endPoint;
-    Button showPath,backButton;
+    EditText startPoint; // edittext field for start point
+    EditText endPoint; // edittextfield for end point
+    Button showPath,backButton; // button to go back and show path
 
     String ans = null;
 
@@ -100,15 +101,17 @@ public class NavigationActivity extends AppCompatActivity{
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_navigation);
+        setContentView(R.layout.activity_navigation); // setting layout file
 
         // proximityHandler.stop();
 
 
+        // applying cloud credentials
         EstimoteCloudCredentials cloudCredentials =
                 new EstimoteCloudCredentials("varun-kothiwala-s-proximit-8kf", "94291148934a38a96e7f46a0fdf9d9f6");
 
 
+        // making object of observer class
         proximityObserverw12 =
                 new ProximityObserverBuilder(getApplicationContext(), cloudCredentials)
                         .withOnErrorAction(new Function1<Throwable, Unit>() {
@@ -123,23 +126,26 @@ public class NavigationActivity extends AppCompatActivity{
 
 
 
-        imageView = (ImageView) this.findViewById(R.id.imageView);
-        startPoint = (EditText)findViewById(R.id.startPoint);
-        endPoint = (EditText)findViewById(R.id.endPoint);
-        showPath = (Button)findViewById(R.id.showPath);
-        backButton = (Button)findViewById(R.id.back);
+        imageView = (ImageView) this.findViewById(R.id.imageView); // object of imageview
+        startPoint = (EditText)findViewById(R.id.startPoint); // object of startpoint filed
+        endPoint = (EditText)findViewById(R.id.endPoint); // object of end point filed
+        showPath = (Button)findViewById(R.id.showPath); // object of show path button
+        backButton = (Button)findViewById(R.id.back); // object for back button
 
+        // getting height and width of the screen
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int dh = displayMetrics.heightPixels;
         int dw = displayMetrics.widthPixels;
 
 
+        // getting current location
         Bundle bundle = getIntent().getExtras();
         String text= bundle.getString("startLocation");
         //  Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT).show();
 
 
+        // setting current location to start point edit text
         startPoint.setText(text);
 
 
@@ -147,26 +153,32 @@ public class NavigationActivity extends AppCompatActivity{
 
 
 
+        // defining bitmap object
         bitmap = Bitmap.createBitmap((int) dw, (int) dh,
                 Bitmap.Config.ARGB_8888);
-        canvas = new Canvas(bitmap);
+        canvas = new Canvas(bitmap); // assigning bitmap object to paint canvas
+
+        // making object of paint with different types
         paint = new Paint();
         cpaint = new Paint();
         rpaint = new Paint();
         path = new Path();
 
+        // paint object for drawing lines on imageview
         paint.setAntiAlias(true);
         paint.setColor(Color.RED);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(20f);
 
+        // paint object to clear image view
         cpaint.setAntiAlias(true);
         cpaint.setColor(Color.WHITE);
         cpaint.setStrokeJoin(Paint.Join.ROUND);
         cpaint.setStyle(Paint.Style.STROKE);
         cpaint.setStrokeWidth(40f);
 
+       // paint object for current location
         rpaint.setAntiAlias(true);
         rpaint.setColor(Color.BLUE);
         rpaint.setStrokeJoin(Paint.Join.ROUND);
@@ -174,10 +186,11 @@ public class NavigationActivity extends AppCompatActivity{
         rpaint.setStrokeWidth(20f);
 
 
-        imageView.setImageBitmap(bitmap);
+        imageView.setImageBitmap(bitmap); // adding bitmap to imageview
 
 
 
+        // to show current location, if current location matches to any of the given string, it will place blue point on that location
         if(text.equals("woodworking entrance"))
         {
             canvas.drawCircle(woodworkingEnterance[0],woodworkingEnterance[1],10,rpaint);
@@ -196,27 +209,35 @@ public class NavigationActivity extends AppCompatActivity{
         }
 
 
+        // on back button click, go to home page
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 flag =0;
-                Intent i = new Intent(NavigationActivity.this,ActivityHomePage.class);
-                startActivity(i);
+                finish();
+               // Intent i = new Intent(NavigationActivity.this,ActivityHomePage.class);
+              //  startActivity(i);
             }
         });
 
+        // on show path button click
         showPath.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // get text from start point and end point field
                 final String start = startPoint.getText().toString();
                 String end = endPoint.getText().toString();
 
+                // draw kine, to clear any existing path
                 canvas.drawLine(woodworkingEnterance[0],woodworkingEnterance[1],stdentloungeEnd[0],stdentloungeEnd[1],cpaint); //woodworking entrance to end of student lounge
                 canvas.drawLine(studentloungeStart[0],studentloungeStart[1], w6we[0],w6we[1],cpaint); //w1-w3 exit
                 canvas.drawLine(studentloungeStart[0],studentloungeStart[1],w11[0], w11[1] ,cpaint); // w12-13 exit
                 canvas.drawLine(stdentloungeEnd[0],stdentloungeEnd[1], w13[0],w13[1],cpaint); //w4-w5 exit
                 canvas.drawLine(stdentloungeEnd[0],stdentloungeEnd[1], w6[0],w6[1],cpaint); //w6,7,8 exit
 
+                // if startpoint equal to any of the string, put blue circle there
                 if(start.equals("woodworking entrance"))
                 {
                     canvas.drawCircle(woodworkingEnterance[0],woodworkingEnterance[1],10,rpaint);
@@ -235,13 +256,19 @@ public class NavigationActivity extends AppCompatActivity{
                 }
 
 
+                // if start point is woodworking entrance
                 if(start.equals("woodworking entrance"))
                 {
+                    // if end point is w1
                     if(end.equals("w1")) {
+
+                        // draw path from start to end point
                         canvas.drawLine(woodworkingEnterance[0], woodworkingEnterance[1], studentloungeStart[0],studentloungeStart[1], paint); // line to studentlounge start
                         canvas.drawLine(studentloungeStart[0], studentloungeStart[1], w1[0], w1[1], paint); // line to w1
+
                         //  canvas.drawCircle(w1[0],w1[1],10,rpaint);
 
+                        // define zone for beacons
                         ProximityZone zone1 = proximityObserverw12.zoneBuilder()
                                 .forAttachmentKeyAndValue("floor", "8th")
                                 .inCustomRange(2.5)
@@ -260,10 +287,12 @@ public class NavigationActivity extends AppCompatActivity{
                                         }
 
                                         //  tv.setText(data);
+                                        // if you scan woodworking entrance beacon, make toast for that
                                         if(data.equals("woodworking entrance,"))
                                         {
                                             Toast.makeText(getApplicationContext(),"You are at woodworking entrance. Walk straight around 4 meters.",Toast.LENGTH_LONG).show();
                                         }
+                                        // if you scan beacon between woodworking entrance and student lounge, make a toast for that
                                         if (data.equals("woodworking entrance,student lounge start,")  || data.equals("student lounge start,")) {
                                             Toast.makeText(getApplicationContext(), "Take right and walk for around 15 meters", Toast.LENGTH_SHORT).show();
                                         }
@@ -273,10 +302,11 @@ public class NavigationActivity extends AppCompatActivity{
                                     }
                                 })
                                 .create();
-                        proximityObserverw12.addProximityZone(zone1);
+                        proximityObserverw12.addProximityZone(zone1); // add zone to observer
 
 
 
+                        // defining zone for destination
                         ProximityZone zone3 =
                                 proximityObserverw12.zoneBuilder()
                                         .forAttachmentKeyAndValue("location", "w12")
@@ -285,6 +315,7 @@ public class NavigationActivity extends AppCompatActivity{
                                             @Override
                                             public Unit invoke(ProximityAttachment proximityAttachment) {
 
+                                                // on destination arrival, give alert
                                                 AlertDialog.Builder builder = new AlertDialog.Builder(NavigationActivity.this);
 
                                                 builder.setTitle("Destination Arrived");
@@ -293,6 +324,7 @@ public class NavigationActivity extends AppCompatActivity{
                                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
                                                     public void onClick(DialogInterface dialog, int which) {
+                                                        // on ok pressed, go to home page
                                                         Intent i = new Intent(NavigationActivity.this,ActivityHomePage.class);
                                                         startActivity(i);
 
@@ -329,6 +361,7 @@ public class NavigationActivity extends AppCompatActivity{
                         proximityObserverw12.addProximityZone(zone3);
 
 
+                        // if fullfill all requirements, start observer zone
                         RequirementsWizardFactory
                                 .createEstimoteRequirementsWizard()
                                 .fulfillRequirements(NavigationActivity.this,
@@ -2965,5 +2998,8 @@ public class NavigationActivity extends AppCompatActivity{
         super.onStop();
 
     }
+
+
+
 }
 

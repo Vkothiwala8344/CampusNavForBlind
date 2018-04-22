@@ -9,22 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/toolbar"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
 
         <EditText
-            android:id="@+id/reminder_title"
+            android:id="@+id/reminderTitle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-            android:gravity="top|left"
             android:hint="enter reminder title"
-            android:inputType="textCapWords|textMultiLine"
-            android:lines="4"
-            android:minLines="4"
             android:scrollHorizontally="false"
             android:textColor="@android:color/black"
             android:textColorHint="@android:color/black"
@@ -78,7 +72,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:id="@+id/set_date"
+                        android:id="@+id/reminderDate"
                         android:textSize="15dp"
                         android:textColor="@android:color/black"
                         android:layout_height="wrap_content"/>
@@ -122,7 +116,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:id="@+id/set_time"
+                        android:id="@+id/reminderTime"
                         android:textSize="15dp"
                         android:textColor="@android:color/black"
                         android:layout_height="wrap_content"/>

@@ -26,24 +26,26 @@ import java.util.Locale;
 
 public class QRActivity extends AppCompatActivity {
 
-    SurfaceView cameraPreview;
-    TextView textView;
-    BarcodeDetector barcodeDetector;
+    SurfaceView cameraPreview; // cameraview that will scan qr code
+    TextView textView; // textview to print scanned qr code
+    BarcodeDetector barcodeDetector; // barcode scanner
     CameraSource cameraSource;
-    TextToSpeech tt;
+    TextToSpeech tt; // this variable is for googlespeak
     final int RequestCameraPermissionID = 1001;
     Button b;
 
+    // request for cameraview
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case RequestCameraPermissionID: {
+                // if premission granted
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        return;
+                        return; // if no permission granted, return
                     }
                     try {
-                        cameraSource.start(cameraPreview.getHolder());
+                        cameraSource.start(cameraPreview.getHolder()); // start camerasource
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -60,16 +62,19 @@ public class QRActivity extends AppCompatActivity {
 
         cameraPreview = (SurfaceView) findViewById(R.id.cameraPreview);
         textView = (TextView) findViewById(R.id.textView);
-        barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
 
+        // building barcode detector
+        barcodeDetector = new BarcodeDetector.Builder(this).setBarcodeFormats(Barcode.QR_CODE).build();
+        // pass barcode detector to cmerasource , to enable qr scanner
         cameraSource = new CameraSource.Builder(this, barcodeDetector).setRequestedPreviewSize(640, 480).build();
 
-        //Add event
+        //start qr scanner
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
+            // on surface creation, ask for camera scan
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    //Request Permission
+                    //if no camera Permission,return
                     ActivityCompat.requestPermissions(QRActivity.this, new String[]{Manifest.permission.CAMERA}, RequestCameraPermissionID);
 
                     return;
@@ -99,17 +104,20 @@ public class QRActivity extends AppCompatActivity {
 
             }
 
+            // on barcode detection
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
 
-                final SparseArray<Barcode> qrcode = detections.getDetectedItems();
+                final SparseArray<Barcode> qrcode = detections.getDetectedItems(); // store scanned qr code data to sparse array
+                // if qrcode is not null
                 if (qrcode.size() != 0) {
+                   // set scanned data to textview
                     textView.post(new Runnable() {
                         @Override
                         public void run() {
                             //Create Vibrator
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                            vibrator.vibrate(1000);
+                            vibrator.vibrate(1000); // vibrate phone
                             textView.setText(qrcode.valueAt(0).displayValue);
                             tt = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
 
@@ -118,9 +126,9 @@ public class QRActivity extends AppCompatActivity {
                                     // Toast.makeText(getApplicationContext(), Integer.toString(s), Toast.LENGTH_SHORT).show();
 
                                     if (s != TextToSpeech.ERROR) {
-                                        tt.setLanguage(Locale.CANADA);
+                                        tt.setLanguage(Locale.CANADA); // set language to canadian english
                                         //  Toast.makeText(getApplicationContext(), "Language is set", Toast.LENGTH_SHORT).show();
-
+                                        // speak out qr data value
                                         tt.speak(qrcode.valueAt(0).displayValue, TextToSpeech.QUEUE_FLUSH, null, null);
                                     } else {
                                         Toast.makeText(getApplicationContext(), "Google speech is not working", Toast.LENGTH_SHORT).show();
@@ -133,7 +141,7 @@ public class QRActivity extends AppCompatActivity {
 
                     try {
                         //1s = 1000
-                        Thread.sleep(3000);
+                        Thread.sleep(3000); // sleep for 3 sec, after speak out
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();

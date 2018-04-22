@@ -6,6 +6,7 @@ public class Notification {
     private String title;
     private String shortdesc;
 
+    //constructor
     public Notification(String title, String shortdesc) {
 
         this.title = title;
@@ -13,10 +14,12 @@ public class Notification {
 
     }
 
+    //return title
     public String getTitle() {
         return title;
     }
 
+    // return description
     public String getShortdesc() {
         return shortdesc;
     }

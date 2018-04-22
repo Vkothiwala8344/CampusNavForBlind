@@ -75,16 +75,5 @@
         android:layout_above="@+id/btn_mic"
         android:layout_alignParentStart="true" />
 
-    <ImageButton
-        android:id="@+id/btn_mic"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@null"
-        android:scaleType="centerCrop"
-        android:contentDescription="Ask Me"
-        android:src="@drawable/mic"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="26dp" />
 
 </RelativeLayout>

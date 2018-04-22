@@ -21,70 +21,62 @@ import android.widget.Toast;
 
 public class AddTimetable extends AppCompatActivity {
 
-    SQLiteDatabase sqLiteDatabaseObj;
-    //edit text
-    EditText subject, professor,room,start,end;
-
-    //string
+    SQLiteDatabase sqLiteDatabaseObj; //database object
+    EditText subject, professor,room,start,end;   //edit text of suject naem,professor name, room number, start time, end time
     String subjectHolder, professorHolder,roomHolder,format,startHolder,endHolder, SQLiteDataBaseQueryHolder;
+    Button EnterData; // object variable for add button
+    Boolean EditTextEmptyHold; // boolean to check if any field is empty or not
+    Calendar calendar; // calender object
+    Spinner dateSpin,typeSpin; // date and class type sipnner
 
-    //button
-    Button EnterData, ButtonDisplayData;
-
-    //bulean to check empty field
-    Boolean EditTextEmptyHold;
-
-    //Calendar
-    Calendar calendar;
-
-    //spinner
-    Spinner dateSpin,typeSpin;
-
-    //spinner varibale
+    //spinner varibale data with fix value
     String selectedDay = "Monday";
     String selectedClass = "Lecture";
 
-    //varibales
-    private int CalendarHour, CalendarMinute;
-    TimePickerDialog timepickerdialog;
+    private int CalendarHour, CalendarMinute; // varibale to hold seleted hour and minute
+    TimePickerDialog timepickerdialog; // object for time picker
 
-    //spinner data
-    String[] daysofWeek={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
-    String[] classType = {"Lecture","Lab"};
+
+    String[] daysofWeek={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}; //spinner data for dayas
+    String[] classType = {"Lecture","Lab"}; //spinner data for class type
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_timetable);
-        //buttons
-        EnterData = (Button)findViewById(R.id.add);
-        //  ButtonDisplayData = (Button)findViewById(R.id.show);
 
-        //edittext
+        EnterData = (Button)findViewById(R.id.add); // object of add timetable button
+
+        // object of edit text of subject,professor name, room number,start time and end time
         subject = (EditText)findViewById(R.id.editText);
         professor = (EditText)findViewById(R.id.professorName);
         room = (EditText)findViewById(R.id.roomNumber);
-
-        //spinner
-        dateSpin = (Spinner)findViewById(R.id.daySpinner);
-        typeSpin = (Spinner)findViewById(R.id.typeSpinner);
-
-        //timer object
         start = (EditText)findViewById(R.id.startTime);
         end = (EditText)findViewById(R.id.endTime);
 
-        //spinner
-        //day picker
-        //Creating the ArrayAdapter instance having the bank name list
+        //oject of spinner days and class type
+        dateSpin = (Spinner)findViewById(R.id.daySpinner);
+        typeSpin = (Spinner)findViewById(R.id.typeSpinner);
+
+
+
+        //spinner code-----------------------------
+
+        // code for day picker
+
+        // arrayadapter of days name
         ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,daysofWeek);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//Setting the ArrayAdapter data on the Spinner
+
+
+        //adding arrayadapter data on days spinner
         dateSpin.setAdapter(aa);
 
+        // on clicking days spinner
         dateSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedDay = daysofWeek[position];
+                selectedDay = daysofWeek[position]; // get id of selected day
                 // Toast.makeText(getApplicationContext(),selectedDay,Toast.LENGTH_SHORT).show();
             }
 
@@ -95,15 +87,19 @@ public class AddTimetable extends AppCompatActivity {
         });
 
 
+        // arrayadapter for class type
         ArrayAdapter bb = new ArrayAdapter(this,android.R.layout.simple_spinner_item,classType);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//Setting the ArrayAdapter data on the Spinner
+
+
+        //adding arrayadapter to class type spinner
         typeSpin.setAdapter(bb);
 
+        // on clicking class type spinner
         typeSpin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedClass = classType[position];
+                selectedClass = classType[position]; // get id of selected class type
                 // Toast.makeText(getApplicationContext(),selectedClass,Toast.LENGTH_SHORT).show();
             }
 
@@ -113,17 +109,19 @@ public class AddTimetable extends AppCompatActivity {
             }
         });
 
-        // start time picker
+        // on clicking start time picker
         start.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
 
+                // get current hours and minute
                 calendar = Calendar.getInstance();
                 CalendarHour = calendar.get(Calendar.HOUR_OF_DAY);
                 CalendarMinute = calendar.get(Calendar.MINUTE);
 
 
+                // set timetext edittext to user selected time
                 timepickerdialog = new TimePickerDialog(AddTimetable.this,
                         new TimePickerDialog.OnTimeSetListener() {
 
@@ -154,8 +152,7 @@ public class AddTimetable extends AppCompatActivity {
                                     format = "AM";
                                 }
 
-
-                                start.setText(hourOfDay + ":" + minute + format);
+                                start.setText(hourOfDay + ":" + minute + format); // set start time to selected time
                             }
                         }, CalendarHour, CalendarMinute, false);
                 timepickerdialog.show();
@@ -164,13 +161,13 @@ public class AddTimetable extends AppCompatActivity {
 
         });
 
-        // end time picker
-
+        // clicking on end time picker
         end.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
 
+                // getting current hours and minutes
                 calendar = Calendar.getInstance();
                 CalendarHour = calendar.get(Calendar.HOUR_OF_DAY);
                 CalendarMinute = calendar.get(Calendar.MINUTE);
@@ -207,7 +204,7 @@ public class AddTimetable extends AppCompatActivity {
                                 }
 
 
-                                end.setText(hourOfDay + ":" + minute + format);
+                                end.setText(hourOfDay + ":" + minute + format); // setting end time to user selected end time
                             }
                         }, CalendarHour, CalendarMinute, false);
                 timepickerdialog.show();
@@ -219,43 +216,39 @@ public class AddTimetable extends AppCompatActivity {
 
 
 
+        // on clicking add timetable record button
         EnterData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
 
-                SQLiteDataBaseBuild();
+                SQLiteDataBaseBuild(); // method to  build database object
 
-                SQLiteTableBuild();
+                SQLiteTableBuild(); // method to  building table in to database
 
-                CheckEditTextStatus();
+                CheckEditTextStatus(); // method to check if edittext are empty or not
 
-                InsertDataIntoSQLiteDatabase();
+                InsertDataIntoSQLiteDatabase(); // method to insert timetable data to database
 
-                EmptyEditTextAfterDataInsert();
+                EmptyEditTextAfterDataInsert(); // method to empty all after insertion fields
 
 
             }
         });
 
-      /*  ButtonDisplayData.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                Intent intent = new Intent(MainActivity.this, DisplaySQLiteDataActivity.class);
-                startActivity(intent);
-            }
-        }); */
     }
 
     public void SQLiteDataBaseBuild(){
 
+        // create database if not exists
         sqLiteDatabaseObj = openOrCreateDatabase(SQLiteHelper.DATABASE_NAME, Context.MODE_PRIVATE, null);
 
     }
 
     public void SQLiteTableBuild(){
 
+        // build table if not exist which will hold out timetable data named, subject name, prof name, class time, room number, start time and end time
         sqLiteDatabaseObj.execSQL("CREATE TABLE IF NOT EXISTS "+SQLiteHelper.TABLE_NAME+" ("+SQLiteHelper.Table_Column_ID+" " +
                 "INTEGER PRIMARY KEY, "+SQLiteHelper.Table_Column_1+" VARCHAR, "+SQLiteHelper.Table_Column_2+" VARCHAR, "+
                 SQLiteHelper.Table_Column_3+" VARCHAR, "+SQLiteHelper.Table_Column_4+" VARCHAR, "+SQLiteHelper.Table_Column_5+" VARCHAR, "+
@@ -265,25 +258,22 @@ public class AddTimetable extends AppCompatActivity {
 
     public void CheckEditTextStatus(){
 
+        // get values of subject, prof name, rokm number, start time and end time edittext
         subjectHolder = subject.getText().toString() ;
         professorHolder = professor.getText().toString();
         roomHolder = room.getText().toString();
         startHolder = start.getText().toString();
         endHolder = end.getText().toString();
 
-        //  Toast.makeText(getApplicationContext(),subjectHolder,Toast.LENGTH_SHORT).show();
-        //  Toast.makeText(getApplicationContext(),professorHolder,Toast.LENGTH_SHORT).show();
-        //  Toast.makeText(getApplicationContext(),roomHolder,Toast.LENGTH_SHORT).show();
-        //  Toast.makeText(getApplicationContext(),startHolder,Toast.LENGTH_SHORT).show();
-        //  Toast.makeText(getApplicationContext(),endHolder,Toast.LENGTH_SHORT).show();
+
 
         if(TextUtils.isEmpty(subjectHolder) || TextUtils.isEmpty(professorHolder) || TextUtils.isEmpty(roomHolder) || TextUtils.isEmpty(startHolder) || TextUtils.isEmpty(endHolder)){
-
+        // if any of the field is empty return false with error
             EditTextEmptyHold = false ;
 
         }
         else {
-
+        // if not field is empty, pass datas
             EditTextEmptyHold = true ;
         }
     }
@@ -293,17 +283,20 @@ public class AddTimetable extends AppCompatActivity {
         if(EditTextEmptyHold == true)
         {
 
+            // insert all data to database table
             SQLiteDataBaseQueryHolder = "INSERT INTO "+SQLiteHelper.TABLE_NAME+" (subject,professor,room,day,type,start,end) VALUES('"+subjectHolder+"','"+professorHolder+"','"+roomHolder+"','"+selectedDay+"','"+selectedClass+"','"+startHolder+"','"+endHolder+"');";
 
             sqLiteDatabaseObj.execSQL(SQLiteDataBaseQueryHolder);
 
             sqLiteDatabaseObj.close();
 
+            // message on successful insertion
             Toast.makeText(AddTimetable.this,"Data Inserted Successfully", Toast.LENGTH_LONG).show();
 
         }
         else {
 
+            // message if any of the text filed is empty.
             Toast.makeText(AddTimetable.this,"Please Fill All The Required Fields.", Toast.LENGTH_LONG).show();
 
         }
@@ -312,6 +305,7 @@ public class AddTimetable extends AppCompatActivity {
 
     public void EmptyEditTextAfterDataInsert(){
 
+        // clear all edit text filed to clear after insertion
         subject.getText().clear();
         professor.getText().clear();
         room.getText().clear();

@@ -11,46 +11,48 @@ import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.NotificationViewHolder> {
 
-    private Context mCtx;
+    private Context context;
     private List<Notification> notificationList;
 
-    public NotificationAdapter(Context mCtx, List<Notification> productList) {
-        this.mCtx = mCtx;
-        this.notificationList = productList;
+    // passing data to notification adapter class, to define listview
+    public NotificationAdapter(Context context, List<Notification> notificationList) {
+        this.context = context;
+        this.notificationList = notificationList;
     }
 
+    // creating inflator for notification list
     @Override
     public NotificationViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(mCtx);
-        View view = inflater.inflate(R.layout.notification_list, null);
+        LayoutInflater inflater = LayoutInflater.from(context); // defining inflator
+        View view = inflater.inflate(R.layout.notification_list, null); // passing layout for list
         return new NotificationViewHolder(view);
     }
 
+    // method to assign data to holder
     @Override
     public void onBindViewHolder(NotificationViewHolder holder, int position) {
-        Notification product = notificationList.get(position);
-
-
-
-        holder.textViewTitle.setText(product.getTitle());
-        holder.textViewShortDesc.setText(product.getShortdesc());
+        //get id of list
+        Notification notificationData = notificationList.get(position);
+        holder.textViewTitle.setText(notificationData.getTitle());
+        holder.textViewShortDesc.setText(notificationData.getShortdesc());
 
     }
 
     @Override
     public int getItemCount() {
+        //returns list size
         return notificationList.size();
     }
 
     class NotificationViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textViewTitle, textViewShortDesc;
+        TextView textViewTitle, textViewShortDesc; // textview to store notification title and body
 
         public NotificationViewHolder(View itemView) {
             super(itemView);
 
-            textViewTitle = itemView.findViewById(R.id.textViewTitle);
-            textViewShortDesc = itemView.findViewById(R.id.textViewShortDesc);
+            textViewTitle = itemView.findViewById(R.id.textViewTitle);// get titletextview object
+            textViewShortDesc = itemView.findViewById(R.id.textViewShortDesc); //get bodytextiew object
 
         }
     }

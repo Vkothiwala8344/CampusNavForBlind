@@ -20,11 +20,11 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         //Displaying token on logcat
         Log.d("Firebase Notification", "Refreshed token: " + recent_token);
 
-        //calling the method store token and passing token
+        //calling the method store token and passing token to that method
         storeToken(recent_token);
     }
     private void storeToken(String token) {
-        //we will save the token in sharedpreferences later
+        //storing deivce token to sharedpreferences
         SharedPrefManager.getInstance(getApplicationContext()).saveDeviceToken(token);
     }
 

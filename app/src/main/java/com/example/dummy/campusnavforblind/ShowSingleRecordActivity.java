@@ -17,20 +17,21 @@ import static com.example.dummy.campusnavforblind.SQLiteHelper.DATABASE_NAME;
 
 public class ShowSingleRecordActivity extends AppCompatActivity {
 
-    String IDholder;
-    TextView id, subject, professor, room, day, type,start,end;
-    SQLiteDatabase sqLiteDatabase;
-    SQLiteHelper sqLiteHelper;
-    Cursor cursor;
-    Button Delete, Edit;
+    String IDholder; // variable that holds id for which we should ask in database
+    TextView id, subject, professor, room, day, type,start,end; // textview objects
+    SQLiteDatabase sqLiteDatabase; // object of sqlite db
+    SQLiteHelper sqLiteHelper; // object of datbasehelper clas
+    Cursor cursor; // cursor object
+    Button Delete, Edit; // button for delete and edit
     SQLiteDatabase sqLiteDatabaseObj;
-    String SQLiteDataBaseQueryHolder ;
+    String SQLiteDataBaseQueryHolder ; // sqlite query holder
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_single_record);
+        setContentView(R.layout.activity_show_single_record); // set layout page
 
+        // object for all textview where we will show our fetched value
         id = (TextView) findViewById(R.id.textViewID);
         subject = (TextView) findViewById(R.id.textViewSubject);
         professor = (TextView) findViewById(R.id.textViewProfessor);
@@ -42,15 +43,19 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
         end = (TextView)findViewById(R.id.textViewEnd);
 
 
+        // object for delete and edit button
         Delete = (Button)findViewById(R.id.buttonDelete);
         Edit = (Button)findViewById(R.id.buttonEdit);
 
+        //getting database of timetable
         sqLiteHelper = new SQLiteHelper(getApplicationContext(), DATABASE_NAME, this, 1);
 
+        // on clicking delete button
         Delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                //ask for user confirmation
                 AlertDialog.Builder builder = new AlertDialog.Builder(ShowSingleRecordActivity.this);
 
                 builder.setTitle("Confirm");
@@ -60,15 +65,16 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
 
                     public void onClick(DialogInterface dialog, int which) {
 
-                        OpenSQLiteDataBase();
+                        // if user confirms deletion
+                        OpenSQLiteDataBase();//open db
 
-                        SQLiteDataBaseQueryHolder = "DELETE FROM "+SQLiteHelper.TABLE_NAME+" WHERE id = "+IDholder+"";
+                        SQLiteDataBaseQueryHolder = "DELETE FROM "+SQLiteHelper.TABLE_NAME+" WHERE id = "+IDholder+"";//define query
 
-                        sqLiteDatabase.execSQL(SQLiteDataBaseQueryHolder);
+                        sqLiteDatabase.execSQL(SQLiteDataBaseQueryHolder); // execute delete query
 
-                        sqLiteDatabase.close();
+                        sqLiteDatabase.close(); // close db
 
-                        finish();
+                        finish(); // finish activity
 
 
                         dialog.dismiss();
@@ -80,6 +86,7 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // if user deny, do nothing
                         dialog.dismiss();
                     }
                 });
@@ -92,6 +99,7 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
             }
         });
 
+        // on clicking edit button, send record id to edit timetable page
         Edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -115,17 +123,21 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
         super.onResume();
     }
 
+    // method to show all data of selected record
     public void ShowSingleRecordInTextView() {
 
-        sqLiteDatabase = sqLiteHelper.getWritableDatabase();
+        sqLiteDatabase = sqLiteHelper.getWritableDatabase(); // open db
 
-        IDholder = getIntent().getStringExtra("ListViewClickedItemValue");
+        IDholder = getIntent().getStringExtra("ListViewClickedItemValue"); //  get id of the record
 
+        // execute query to select all columns of specific record
         cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + SQLiteHelper.TABLE_NAME + " WHERE id = " + IDholder + "", null);
 
+        // go to first record
         if (cursor.moveToFirst()) {
 
             do {
+                // set textview to their appropriate fetched column value
                 id.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.Table_Column_ID)));
                 subject.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.Table_Column_1)));
                 professor.setText(cursor.getString(cursor.getColumnIndex(SQLiteHelper.Table_Column_2)));
@@ -142,7 +154,7 @@ public class ShowSingleRecordActivity extends AppCompatActivity {
 
         }
     }
-
+    // method to open db
     public void OpenSQLiteDataBase(){
 
         sqLiteDatabaseObj = openOrCreateDatabase(DATABASE_NAME, Context.MODE_PRIVATE, null);

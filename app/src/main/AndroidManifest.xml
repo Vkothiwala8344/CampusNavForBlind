@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.dummy.campusnavforblind">
 
+    <!--  permission which are required for application  -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -27,12 +28,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- service to get token for mobile device  -->
         <service android:name=".MyFirebaseInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
+        <!--  service to get remote message from firebase-->
         <service
             android:name=".MyFirebaseMessagingService"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -77,11 +80,13 @@
         <activity android:name=".NavigationActivity" android:label="Navigation Page"/>
 
 
+        <!--  provider which is required to work on table uri-->
         <provider
             android:name=".ReminderDatabasePackage.ReminderQueryProvider"
-            android:authorities="com.delaroystudios.alarmreminder"
+            android:authorities="com.example.dummy.campusnavforblind"
             android:exported="false" />
 
+        <!--  service for reminder settings -->
         <service
             android:name=".ReminderServicePackage.ReminderService"
             android:exported="false" />

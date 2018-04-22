@@ -1,3 +1,12 @@
+/*
+This page will open when user click on open notification button from the home page.
+Here user can see all college alerts posted by them.
+
+Reference:
+
+*/
+
+
 package com.example.dummy.campusnavforblind;
 
 import android.os.Bundle;
@@ -21,12 +30,13 @@ import java.util.List;
 public class ViewNotification extends AppCompatActivity {
 
 
-    private static final String URL_PRODUCTS = "https://varun1995.000webhostapp.com/PUSH_NOTIFICATION/notificationApi.php";
+    // api link which will hold all json data regarding college alerts
+    private static final String URL_NOTIFICATION = "https://varun1995.000webhostapp.com/PUSH_NOTIFICATION/notificationApi.php";
 
-    //a list to store all the products
+    //a list to store all the notification data
     List<Notification> notificationList;
 
-    //the recyclerview
+    //listview which will show all the fetched json data
     RecyclerView recyclerView;
 
     @Override
@@ -34,46 +44,49 @@ public class ViewNotification extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_notification);
 
-        //getting the recyclerview from xml
+        //getting the recyclerview layout which will hold all json data
         recyclerView = findViewById(R.id.recylcerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        //initializing the productlist
+        //initializing notification list objet
         notificationList = new ArrayList<>();
 
-        //this method will fetch and parse json
-        //to display it in recyclerview
-        loadNotification();
+
+        loadNotification(); //  method to fetch notification from given api link
 
     }
 
     private void loadNotification()
     {
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_PRODUCTS,
+        // getting json data from given api link
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, URL_NOTIFICATION,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         try {
-                           // Toast.makeText(getApplicationContext(),response,Toast.LENGTH_LONG).show();
-                            //converting the string to json array object
+                           // if found any json data
+
+                            //typecasting fetched string to json array object
                             JSONArray array = new JSONArray(response);
 
-                            //traversing through all the object
+                            //going through all the object one by one
                             for (int i = 0; i < array.length(); i++) {
 
-                                //getting product object from json array
-                                JSONObject product = array.getJSONObject(i);
+                                //getting notification object from json array
+                                JSONObject notification = array.getJSONObject(i);
 
-                                //adding the product to product list
+                                //adding fetched data to list view
                                 notificationList.add(new Notification(
-                                        product.getString("title"),
-                                        product.getString("body")
+                                        notification.getString("title"),
+                                        notification.getString("body")
                                 ));
                             }
 
-                            //creating adapter object and setting it to recyclerview
+                            //creating adapter object with list view
                             NotificationAdapter adapter = new NotificationAdapter(ViewNotification.this, notificationList);
+
+                            // adding adapter to list view whcih will show all records in list
                             recyclerView.setAdapter(adapter);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -83,11 +96,11 @@ public class ViewNotification extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                    // error message if failed to fetch data
                     }
                 });
 
-        //adding our stringrequest to queue
+        //adding out json data request in line
         Volley.newRequestQueue(this).add(stringRequest);
     }
 

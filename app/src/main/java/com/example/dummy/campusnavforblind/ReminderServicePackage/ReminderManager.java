@@ -6,17 +6,21 @@ import android.content.Context;
 public class ReminderManager {
 
     private static final String TAG = ReminderManager.class.getSimpleName();
-    private static AlarmManager sAlarmManager;
+    private static AlarmManager aManager; // get alarm manager
+
+    // if alarm already exist for given thing, bring error
     public static synchronized void injectAlarmManager(AlarmManager alarmManager) {
-        if (sAlarmManager != null) {
+        if (aManager != null) {
             throw new IllegalStateException("Alarm Manager Already Set");
         }
-        sAlarmManager = alarmManager;
+        aManager = alarmManager;
     }
-    /*package*/ static synchronized AlarmManager getAlarmManager(Context context) {
-        if (sAlarmManager == null) {
-            sAlarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+    // if alarm is not set, make object of alarm manage to work on alarm data
+   static synchronized AlarmManager getAlarmManager(Context context) {
+        if (aManager == null) {
+            aManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         }
-        return sAlarmManager;
+        return aManager;
     }
 }

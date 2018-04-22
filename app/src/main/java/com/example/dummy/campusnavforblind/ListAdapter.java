@@ -1,3 +1,6 @@
+/*
+this page is adpater class for view timetable's listview
+ */
 package com.example.dummy.campusnavforblind;
 
 import android.content.Context;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 
 public class ListAdapter extends BaseAdapter {
 
+    // arraylist object initialization
     Context context;
     ArrayList<String> ID;
     ArrayList<String> SUBJECT;
@@ -22,6 +26,7 @@ public class ListAdapter extends BaseAdapter {
     ArrayList<String> END;
 
 
+    // constructor
     public ListAdapter(
             Context context2,
             ArrayList<String> id,
@@ -35,6 +40,7 @@ public class ListAdapter extends BaseAdapter {
     )
     {
 
+        // constructor assignment
         this.context = context2;
         this.ID = id;
         this.SUBJECT = subject;
@@ -46,34 +52,39 @@ public class ListAdapter extends BaseAdapter {
         this.END = end;
     }
 
+    // returns colunt of table records
     public int getCount() {
-        // TODO Auto-generated method stub
         return ID.size();
     }
 
+    // gives item with position specified
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return null;
     }
 
+    // gives item position
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     public View getView(int position, View child, ViewGroup parent) {
 
+        // holder object
         Holder holder;
 
+        // layout inflater
         LayoutInflater layoutInflater;
 
+        // if no previous inflator
         if (child == null) {
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+            // inflate with item layout
             child = layoutInflater.inflate(R.layout.items, null);
 
             holder = new Holder();
 
+            // getting all element of list and assign to holder object
             holder.ID_TextView = (TextView) child.findViewById(R.id.textViewID);
             holder.SUBJECT_TextView = (TextView) child.findViewById(R.id.textViewSUBJECT);
             holder.PROFESSOR_TextView = (TextView) child.findViewById(R.id.textViewPROFESSOR);
@@ -90,6 +101,7 @@ public class ListAdapter extends BaseAdapter {
 
             holder = (Holder) child.getTag();
         }
+        // assign holder object to item layout
         holder.ID_TextView.setText(ID.get(position));
         holder.SUBJECT_TextView.setText(SUBJECT.get(position));
         holder.PROFESSOR_TextView.setText(PROFESSOR.get(position));
@@ -103,6 +115,7 @@ public class ListAdapter extends BaseAdapter {
 
     public class Holder {
 
+        // variable of holder
         TextView ID_TextView;
         TextView SUBJECT_TextView;
         TextView PROFESSOR_TextView;

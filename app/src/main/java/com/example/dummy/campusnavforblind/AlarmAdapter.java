@@ -1,3 +1,7 @@
+/*
+This is a adapter file for reminder page. It will take alarm_item as layout file.
+Reference:
+ */
 package com.example.dummy.campusnavforblind;
 
 import android.content.Context;
@@ -16,71 +20,80 @@ import com.example.dummy.campusnavforblind.ReminderDatabasePackage.ReminderDbCon
 
 public class AlarmAdapter extends CursorAdapter {
 
-    private TextView mTitleText, mDateAndTimeText, mRepeatInfoText;
-    private ImageView mActiveImage , mThumbnailImage;
-    private ColorGenerator mColorGenerator = ColorGenerator.DEFAULT;
-    private TextDrawable mDrawableBuilder;
+
+    private TextView Titletv, DateTimetv; // textview for reminder title, date-time
+    private ImageView letterImage; // imageview for letter image
+    private ColorGenerator colorGenerator = ColorGenerator.DEFAULT; // color for letter image
+    private TextDrawable textDrawable;
 
     public AlarmAdapter(Context context, Cursor c) {
-        super(context, c, 0 /* flags */);
+        super(context, c, 0 );
     }
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.alarm_items, parent, false);
+        return LayoutInflater.from(context).inflate(R.layout.alarm_items, parent, false); // gettting layout file
     }
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        mTitleText = (TextView) view.findViewById(R.id.recycle_title);
-        mDateAndTimeText = (TextView) view.findViewById(R.id.recycle_date_time);
+        Titletv = (TextView) view.findViewById(R.id.remind_title); // textview for title
+        DateTimetv = (TextView) view.findViewById(R.id.remind_date_time); // textview for date-time
 
-        mThumbnailImage = (ImageView) view.findViewById(R.id.thumbnail_image);
+        letterImage = (ImageView) view.findViewById(R.id.letter_image); // imageview for letter image
 
-        int titleColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_TITLE);
-        int dateColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_DATE);
-        int timeColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_TIME);
+        // getting data from cursor and assigning to variables
+        int titleColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_TITLE);  // assigning reminder title
+        int dateColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_DATE); // assigning reminder date
+        int timeColumnIndex = cursor.getColumnIndex(ReminderDbConfig.ReminderEntry.KEY_TIME); // assigning rmeinder time
 
 
+        //assigning reminder title, date and time
         String title = cursor.getString(titleColumnIndex);
         String date = cursor.getString(dateColumnIndex);
         String time = cursor.getString(timeColumnIndex);
 
 
 
+        // setting title of reminder
         setReminderTitle(title);
 
+
         if (date != null){
+            // if date is not null, set date time
             String dateTime = date + " " + time;
             setReminderDateTime(dateTime);
         }else{
-            mDateAndTimeText.setText("Date not set");
+            // if date is null
+            DateTimetv.setText("Date not set");
         }
 
 
 
     }
 
-    // Set reminder title view
+    // Setting reminder title
     public void setReminderTitle(String title) {
-        mTitleText.setText(title);
+        Titletv.setText(title); // set reminder title as title
         String letter = "A";
 
+        //getting first letter of title
         if(title != null && !title.isEmpty()) {
             letter = title.substring(0, 1);
         }
 
-        int color = mColorGenerator.getRandomColor();
+        // setting random color for letter image
+        int color = colorGenerator.getRandomColor();
 
-        // Create a circular icon consisting of  a random background colour and first letter of title
-        mDrawableBuilder = TextDrawable.builder()
+        // making round letter image with random color in background, and first letter of title
+        textDrawable = TextDrawable.builder()
                 .buildRound(letter, color);
-        mThumbnailImage.setImageDrawable(mDrawableBuilder);
+        letterImage.setImageDrawable(textDrawable);
     }
 
-    // Set date and time views
+    // Setting reminder datetime of reminder
     public void setReminderDateTime(String datetime) {
-        mDateAndTimeText.setText(datetime);
+        DateTimetv.setText(datetime);
     }
 
 }

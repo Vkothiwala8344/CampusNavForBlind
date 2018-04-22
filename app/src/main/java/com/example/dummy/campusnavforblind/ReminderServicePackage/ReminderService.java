@@ -21,8 +21,9 @@ public class ReminderService extends IntentService {
 
     private static final String TAG = ReminderService.class.getSimpleName();
 
-    private static final int NOTIFICATION_ID = 42;
-    //This is a deep link intent, and needs the task stack
+    private static final int NOTIFICATION_ID = 32;
+
+    // get peniding instent for current uri reminder
     public static PendingIntent getReminderPendingIntent(Context context, Uri uri) {
         Intent action = new Intent(context, ReminderService.class);
         action.setData(uri);
@@ -33,41 +34,47 @@ public class ReminderService extends IntentService {
         super(TAG);
     }
 
+    //method to give notification about reminder
     @Override
     protected void onHandleIntent(Intent intent) {
 
+        //get notification manager
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        // get uri from bundle
         Uri uri = intent.getData();
 
-        //Display a notification to view the task details
+        //set notiifcation for reminder data
         Intent action = new Intent(this, AddReminderActivity.class);
         action.setData(uri);
         PendingIntent operation = TaskStackBuilder.create(this)
                 .addNextIntentWithParentStack(action)
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //Grab the task description
+        //get reminder title using uri and store it to cursor
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
 
         String description = "";
         try {
+            // getting title of rmeinder for given reminder
             if (cursor != null && cursor.moveToFirst()) {
                 description = ReminderDbConfig.getColumnString(cursor, ReminderDbConfig.ReminderEntry.KEY_TITLE);
             }
         } finally {
+            // traverse untill, cursor is empty
             if (cursor != null) {
                 cursor.close();
             }
         }
 
+        // build notification for reminder
         Notification note = new NotificationCompat.Builder(this)
-                .setContentTitle(getString(R.string.reminder_title))
-                .setContentText(description)
-                .setSmallIcon(R.drawable.walksafe)
+                .setContentTitle("Reminder")  // setting title
+                .setContentText(description) // setting body which is fetched from given uri
+                .setSmallIcon(R.drawable.walksafe) // setting logo for notification
                 .setContentIntent(operation)
-                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setAutoCancel(true)
+                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 }) // setting vibration
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI) // setting sound
+                .setAutoCancel(true) // allowing auto cancel
                 .build();
 
         manager.notify(NOTIFICATION_ID, note);
